@@ -1,4 +1,4 @@
-ipackage api.course.operations;
+package api.course.operations;
 
 public class Operations {
 	
