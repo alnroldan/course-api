@@ -17,3 +17,6 @@ container: maven:3.8.1-openjdk-16-slim
 
 steps:
   - script: mvn clean install
+
+  - publish: $(System.DefaultWorkingDirectory)/target
+    artifact: target
