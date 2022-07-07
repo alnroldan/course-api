@@ -4,19 +4,20 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/java
 
 trigger:
-- master
+- main
 
 variables:
-  maven_ops: '-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Dorg.slf4j.simpleLogger.dateTimeFormat=HH:mm:ss,SSS'
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+    - group: java-prod
+  - name: maven-ops
+    value: '-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Dorg.slf4j.simpleLogger.dateTimeFormat=HH:mm:ss,SSS'
 
-pool:
-  name: Default
-  demands:
-  - agent.name -equals az002-linux
-container: maven:3.8.1-openjdk-16-slim
+resources: 
+  repositories:
+  - repository: template-devops
+    type: git
+    name: jr-devops/template-java-mvn
+    ref: refs/heads/main
 
-steps:
-  - script: mvn clean install
-
-  - publish: $(System.DefaultWorkingDirectory)/target
-    artifact: target
+extends:
+  template: init.yml@template-devops
